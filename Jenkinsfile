@@ -18,7 +18,7 @@ pipeline {
 	stage ('Check-Git-Secrets'){
 	  steps {
 	    sshagent(['stagingServer']){
-		  sh 'sh -t -t vagrant@192.168.99.26 -o StrictHostKeyChecking=no "rm trufflehog || true; docker pull gesellix/trufflehog; docker run gesellix/trufflehog --json  https://github.com/yulian6766/devsecops-webapp.git > trufflehog; cat trufflehog"'
+		  sh 'sh -tt vagrant@192.168.99.26 -o StrictHostKeyChecking=no "rm trufflehog || true; docker pull gesellix/trufflehog; docker run gesellix/trufflehog --json  https://github.com/yulian6766/devsecops-webapp.git > trufflehog; cat trufflehog"'
 		}
 	  }
 	}
