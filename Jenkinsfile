@@ -23,6 +23,15 @@ pipeline {
 	  }
 	}
 	
+	stage ('Check-Git-Secrets'){
+	  steps {
+	    sh 'rm owasp* || true'
+	    sh 'wget "https://raw.githubusercontent.com/yulian6766/devsecops-webapp/master/owasp-dependency-check.sh"'
+		sh 'chmod +x owasp-dependency-check.sh'
+		sh 'sh owasp-dependency-check.sh'
+	  }
+	}
+	
 	stage ('Build'){
 	  steps {
 	    sh 'mvn clean package'
