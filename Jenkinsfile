@@ -30,7 +30,7 @@ pipeline {
 	          wget "https://raw.githubusercontent.com/yulian6766/devsecops-webapp/master/owasp-dependency-check.sh";
 		      chmod +x owasp-dependency-check.sh;
 		      sh owasp-dependency-check.sh;
-		      sudo cat /root/OWASP-Dependency-Check/reports/dependency-check-report.xml";
+		      cat /home/vagrant/OWASP-Dependency-Check/reports/dependency-check-report.xml";
 		     '''
 		}
 	  }
