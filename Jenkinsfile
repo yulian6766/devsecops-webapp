@@ -29,8 +29,17 @@ pipeline {
 	      sh 'rm owasp* || true'
 	      sh 'wget "https://raw.githubusercontent.com/yulian6766/devsecops-webapp/master/owasp-dependency-check.sh"'
 		  sh 'chmod +x owasp-dependency-check.sh'
-		  sh 'sudo sh owasp-dependency-check.sh'
-		  sh 'sudo cat /root/OWASP-Dependency-Check/reports/dependency-check-report.xml'
+		  sh 'sh owasp-dependency-check.sh'
+		  sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-chechk-report.xml'
+		}
+	  }
+	}
+	
+	stage ('SAST') {
+	  steps {
+	    withSonarQubeEnv ('Sonar') {
+		  sh 'mvn sonar:sonar'
+		  sh 'cat target/sonar/report-task.txt'
 		}
 	  }
 	}
