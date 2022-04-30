@@ -18,7 +18,7 @@ pipeline {
 	stage ('Check-Git-Secrets'){
 	  steps {
 	    sshagent(['stagingServer']){
-		  sh 'ssh -t -t vagrant@192.168.99.26 -o StrictHostKeyChecking=no "rm trufflehog || true; docker pull gesellix/trufflehog; docker run gesellix/trufflehog --json  https://github.com/yulian6766/devsecops-webapp.git > trufflehog; cat trufflehog"'
+		  sh 'ssh -t -t vagrant@192.168.99.28 -o StrictHostKeyChecking=no "rm trufflehog || true; docker pull gesellix/trufflehog; docker run gesellix/trufflehog --json  https://github.com/yulian6766/devsecops-webapp.git > trufflehog; cat trufflehog"'
 		}
 	  }
 	}
@@ -26,11 +26,12 @@ pipeline {
 	stage ('Dependency-Vuln-Check'){
 	  steps {
 	    sshagent(['stagingServer']) {
-	      sh 'rm owasp* || true'
-	      sh 'wget "https://raw.githubusercontent.com/yulian6766/devsecops-webapp/master/owasp-dependency-check.sh"'
-		  sh 'chmod +x owasp-dependency-check.sh'
-		  sh 'sh owasp-dependency-check.sh'
-		  sh 'sudo cat /root/OWASP-Dependency-Check/reports/dependency-check-report.xml'
+	      sh '''ssh -o StrictHostKeyChecking=no vagrant@192.168.99.28 "rm owasp* || true";
+	          wget "https://raw.githubusercontent.com/yulian6766/devsecops-webapp/master/owasp-dependency-check.sh";
+		      chmod +x owasp-dependency-check.sh;
+		      sh owasp-dependency-check.sh;
+		      sudo cat /root/OWASP-Dependency-Check/reports/dependency-check-report.xml;
+		     '''
 		}
 	  }
 	}
@@ -57,6 +58,14 @@ pipeline {
         }      
       }       
     }
+	
+	stage ('DAST'){
+	  steps {
+	    sshagent(['stagingServer']) {
+		  sh 'ssh -o StrictHostKeyChecking=no vagrant@192.168.99.28 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://192.168.99.26:8080/webapp/"'
+		}
+	  }
+	}
 	
   }
 }
